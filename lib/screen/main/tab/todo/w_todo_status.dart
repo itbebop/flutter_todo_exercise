@@ -1,6 +1,8 @@
 import 'package:fast_app_base/common/common.dart';
+import 'package:fast_app_base/screen/main/tab/todo/w_fire.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../data/memory/todo_status.dart';
 import '../../../../data/memory/vo_todo.dart';
 
 class TodoStatusWidget extends StatelessWidget {
@@ -10,13 +12,25 @@ class TodoStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 50,
-      height: 50,
-      child: Checkbox(
-        value: true,
-        onChanged: null,
-        fillColor: MaterialStateProperty.all(context.appColors.checkBoxColor),
+    return Tap(
+      onTap: () {
+        context.holder.changeTodoStatus(todo);
+      },
+      child: SizedBox(
+        width: 50,
+        height: 50,
+        child: switch (todo.status) {
+          TodoStatus.complete => Checkbox(
+              value: true,
+              onChanged: null,
+              fillColor: MaterialStateProperty.all(context.appColors.checkBoxColor),
+            ),
+          TodoStatus.incomplete => const Checkbox(
+              value: false,
+              onChanged: null,
+            ),
+          TodoStatus.ongoing => const Fire()
+        },
       ),
     );
   }

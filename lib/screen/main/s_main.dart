@@ -1,8 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:fast_app_base/data/memory/vo_todo.dart';
 import 'package:fast_app_base/screen/main/tab/tab_item.dart';
 import 'package:fast_app_base/screen/main/tab/tab_navigator.dart';
-import 'package:fast_app_base/screen/main/write/d_write.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/common.dart';
@@ -51,19 +49,7 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            // WriteTodoResult? 타입으로 받음 (WriteTodoDialog의 13줄에 명시해서)
-            final result = await WriteTodoDialog().show();
-            if (result != null && mounted) {
-              // await 이후에 context가 유효하지 않게 될 수 있어 아래 부분 문제될 수도 있다. 그래서 mounted여부도 체크
-              // mounted는 현재 스크린이 살아있는지 체크
-              context.holder.notifier.addTodo(Todo(
-                id: DateTime.now().millisecondsSinceEpoch,
-                title: result.text,
-                dueDate: result.dateTime,
-              ));
-              //debugPrint(result.text);
-              //debugPrint(result.dateTime.formattedDate);
-            }
+            context.holder.addTodo();
           },
           child: const Icon(EvaIcons.plus),
         ),

@@ -13,4 +13,9 @@ class TodoDataNotifier extends ValueNotifier<List<Todo>> {
     value.add(todo); // value에 받아온 todo를 넣고
     notifyListeners(); // TodoDataNotifier를 사용하고 있는 곳에 데이터변경 알림
   }
+
+  // notify함수를 외부에서 사용하는 경우 warning뜨므로, warning 안보기위한 편법
+  void notify() {
+    notifyListeners();
+  }
 }
