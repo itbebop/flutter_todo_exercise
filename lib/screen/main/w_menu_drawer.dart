@@ -43,10 +43,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
             child: Container(
               width: 240,
               padding: const EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-                  color: context.colors.background),
+              decoration: BoxDecoration(borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)), color: context.colors.background),
               child: isSmallScreen(context)
                   ? SingleChildScrollView(
                       child: getMenus(context),
@@ -59,8 +56,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     );
   }
 
-  bool isSmallScreen(BuildContext context) =>
-      context.deviceHeight < MenuDrawer.minHeightForScrollView;
+  bool isSmallScreen(BuildContext context) => context.deviceHeight < MenuDrawer.minHeightForScrollView;
 
   Container getMenus(BuildContext context) {
     return Container(
@@ -106,7 +102,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
             },
           ),
           const Line(),
-          isSmallScreen(context) ? const Height(10) : const EmptyExpanded(),
+          isSmallScreen(context) ? const Height(10) : spacer,
           MouseRegion(
             cursor: SystemMouseCursors.click,
             child: ModeSwitch(
@@ -128,14 +124,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
             children: [
               Expanded(
                 child: Tap(
-                  child: Container(
-                      height: 30,
-                      width: 100,
-                      padding: const EdgeInsets.only(left: 15),
-                      child: '© 2023. Bansook Nam. all rights reserved.'
-                          .selectableText
-                          .size(10)
-                          .makeWithDefaultFont()),
+                  child: Container(height: 30, width: 100, padding: const EdgeInsets.only(left: 15), child: '© 2023. Bansook Nam. all rights reserved.'.selectableText.size(10).makeWithDefaultFont()),
                   onTap: () async {},
                 ),
               ),
@@ -201,12 +190,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
         children: [
           flag(language.flagPath),
           const Width(8),
-          describeEnum(language)
-              .capitalizeFirst!
-              .text
-              .color(Theme.of(context).textTheme.bodyLarge?.color)
-              .size(12)
-              .makeWithDefaultFont(),
+          describeEnum(language).capitalizeFirst!.text.color(Theme.of(context).textTheme.bodyLarge?.color).size(12).makeWithDefaultFont(),
         ],
       ),
     );
@@ -246,12 +230,7 @@ class _MenuWidget extends StatelessWidget {
           padding: const EdgeInsets.only(left: 15, right: 20),
           child: Row(
             children: [
-              Expanded(
-                  child: text.text
-                      .textStyle(defaultFontStyle())
-                      .color(context.appColors.drawerText)
-                      .size(15)
-                      .make()),
+              Expanded(child: text.text.textStyle(defaultFontStyle()).color(context.appColors.drawerText).size(15).make()),
             ],
           ),
         ),

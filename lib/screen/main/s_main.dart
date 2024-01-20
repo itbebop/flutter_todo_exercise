@@ -1,4 +1,5 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:fast_app_base/data/memory/vo_todo.dart';
 import 'package:fast_app_base/screen/main/tab/tab_item.dart';
 import 'package:fast_app_base/screen/main/tab/tab_navigator.dart';
 import 'package:fast_app_base/screen/main/write/d_write.dart';
@@ -14,16 +15,14 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => MainScreenState();
 }
 
-class MainScreenState extends State<MainScreen>
-    with SingleTickerProviderStateMixin {
+class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
   TabItem _currentTab = TabItem.Todo;
   final tabs = [TabItem.Todo, TabItem.Search];
   final List<GlobalKey<NavigatorState>> navigatorKeys = [];
 
   int get _currentIndex => tabs.indexOf(_currentTab);
 
-  GlobalKey<NavigatorState> get _currentTabNavigationKey =>
-      navigatorKeys[_currentIndex];
+  GlobalKey<NavigatorState> get _currentTabNavigationKey => navigatorKeys[_currentIndex];
 
   bool get extendBody => true;
 
@@ -44,18 +43,29 @@ class MainScreenState extends State<MainScreen>
         drawer: const MenuDrawer(),
         body: Container(
           color: context.appColors.seedColor.getMaterialColorValues[200],
-          padding: EdgeInsets.only(
-              bottom: extendBody ? 60 - bottomNavigationBarBorderRadius : 0),
+          padding: EdgeInsets.only(bottom: extendBody ? 60 - bottomNavigationBarBorderRadius : 0),
           child: SafeArea(
             bottom: !extendBody,
             child: pages,
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            WriteTodoDialog().show();
+          onPressed: () async {
+            // WriteTodoResult? 타입으로 받음 (WriteTodoDialog의 13줄에 명시해서)
+            final result = await WriteTodoDialog().show();
+            if (result != null && mounted) {
+              // await 이후에 context가 유효하지 않게 될 수 있어 아래 부분 문제될 수도 있다. 그래서 mounted여부도 체크
+              // mounted는 현재 스크린이 살아있는지 체크
+              context.holder.notifier.addTodo(Todo(
+                id: DateTime.now().millisecondsSinceEpoch,
+                title: result.text,
+                dueDate: result.dateTime,
+              ));
+              //debugPrint(result.text);
+              //debugPrint(result.dateTime.formattedDate);
+            }
           },
-          child: Icon(EvaIcons.plus),
+          child: const Icon(EvaIcons.plus),
         ),
         bottomNavigationBar: _buildBottomNavigationBar(context),
       ),
@@ -75,8 +85,7 @@ class MainScreenState extends State<MainScreen>
           .toList());
 
   Future<bool> _handleBackPressed() async {
-    final isFirstRouteInCurrentTab =
-        (await _currentTabNavigationKey.currentState?.maybePop() == false);
+    final isFirstRouteInCurrentTab = (await _currentTabNavigationKey.currentState?.maybePop() == false);
     if (isFirstRouteInCurrentTab) {
       if (_currentTab != TabItem.Todo) {
         _changeTab(tabs.indexOf(TabItem.Todo));
@@ -130,15 +139,12 @@ class MainScreenState extends State<MainScreen>
     });
   }
 
-  BottomNavigationBarItem bottomItem(bool activate, IconData iconData,
-      IconData inActivateIconData, String label) {
+  BottomNavigationBarItem bottomItem(bool activate, IconData iconData, IconData inActivateIconData, String label) {
     return BottomNavigationBarItem(
         icon: Icon(
           key: ValueKey(label),
           activate ? iconData : inActivateIconData,
-          color: activate
-              ? context.appColors.iconButton
-              : context.appColors.iconButtonInactivate,
+          color: activate ? context.appColors.iconButton : context.appColors.iconButtonInactivate,
         ),
         label: label);
   }
