@@ -22,7 +22,8 @@ class TodoDataHolder extends InheritedWidget {
 
   static TodoDataHolder _of(BuildContext context) {
     // 같은 위젯 트리의 위젯 어디든 TodoDataHolder를 찾아서 돌려주는 역할
-    TodoDataHolder inherited = (context.dependOnInheritedWidgetOfExactType<TodoDataHolder>())!;
+    TodoDataHolder inherited =
+        (context.dependOnInheritedWidgetOfExactType<TodoDataHolder>())!;
     return inherited;
   }
 
@@ -62,6 +63,24 @@ class TodoDataHolder extends InheritedWidget {
       //debugPrint(result.text);
       //debugPrint(result.dateTime.formattedDate);
     }
+  }
+
+  // dialog
+  void editTodo(Todo todo) async {
+    final result = await WriteTodoDialog(todoForEdit: todo).show();
+    if (result != null) {
+      debugPrint(result.toString());
+      todo.title = result.text;
+      todo.dueDate = result.dateTime;
+      // 화면 갱신
+      notifier.notify();
+    }
+  }
+
+  void removeTodo(Todo todo) {
+    // value가 todo 리스트 데이터
+    notifier.value.remove(todo);
+    notifier.notify();
   }
 }
 

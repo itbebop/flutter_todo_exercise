@@ -19,11 +19,13 @@ class TodoStatusWidget extends StatelessWidget {
       child: SizedBox(
         width: 50,
         height: 50,
+        // switch문으로 return (dart 3.0부터)
         child: switch (todo.status) {
           TodoStatus.complete => Checkbox(
               value: true,
               onChanged: null,
-              fillColor: MaterialStateProperty.all(context.appColors.checkBoxColor),
+              fillColor:
+                  MaterialStateProperty.all(context.appColors.checkBoxColor),
             ),
           TodoStatus.incomplete => const Checkbox(
               value: false,

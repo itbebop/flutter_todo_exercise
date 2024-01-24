@@ -9,21 +9,34 @@ import 'package:flutter/material.dart';
 import 'package:nav/dialog/dialog.dart';
 
 import '../../../common/widget/w_rounded_container.dart';
+import '../../../data/memory/vo_todo.dart';
 
 class WriteTodoDialog extends DialogWidget<WriteTodoResult> {
-  WriteTodoDialog({super.key});
+  final Todo? todoForEdit;
+
+  WriteTodoDialog({this.todoForEdit, super.key});
 
   @override
   DialogState<WriteTodoDialog> createState() => _WriteTodoDialogState();
 }
 
 // AfterLayoutMixin -> 화면 그려진 후 keyboard 나오게
-class _WriteTodoDialogState extends DialogState<WriteTodoDialog> with AfterLayoutMixin {
+class _WriteTodoDialogState extends DialogState<WriteTodoDialog>
+    with AfterLayoutMixin {
   // 달력클릭했을 때 받을 날짜, 변할 수 있어서 final로 받지 않음
   DateTime _selectedDate = DateTime.now();
   final textController = TextEditingController();
   // keyboard 보일지 여부
   final node = FocusNode();
+
+  @override
+  void initState() {
+    if (widget.todoForEdit != null) {
+      _selectedDate = widget.todoForEdit!.dueDate;
+      textController.text = widget.todoForEdit!.title;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +50,9 @@ class _WriteTodoDialogState extends DialogState<WriteTodoDialog> with AfterLayou
               '할일을 작성해주세요'.text.size(18).bold.make(),
               spacer,
               _selectedDate.relativeDays.text.make(),
-              IconButton(onPressed: _selectDate, icon: const Icon(Icons.calendar_month)),
+              IconButton(
+                  onPressed: _selectDate,
+                  icon: const Icon(Icons.calendar_month)),
             ],
           ),
           heigh20,
@@ -50,9 +65,10 @@ class _WriteTodoDialogState extends DialogState<WriteTodoDialog> with AfterLayou
                 controller: textController,
               )),
               RoundButton(
-                  text: '추가',
+                  text: isEditMode ? '완료' : '추가',
                   onTap: () {
-                    widget.hide(WriteTodoResult(_selectedDate, textController.text));
+                    widget.hide(
+                        WriteTodoResult(_selectedDate, textController.text));
                   }),
             ],
           )
@@ -61,9 +77,14 @@ class _WriteTodoDialogState extends DialogState<WriteTodoDialog> with AfterLayou
     ));
   }
 
+  bool get isEditMode => widget.todoForEdit != null;
+
   void _selectDate() async {
-    final date =
-        await showDatePicker(context: context, initialDate: _selectedDate, firstDate: DateTime.now().subtract(const Duration(days: 365)), lastDate: DateTime.now().add(const Duration(days: 365 * 10)));
+    final date = await showDatePicker(
+        context: context,
+        initialDate: _selectedDate,
+        firstDate: DateTime.now().subtract(const Duration(days: 365)),
+        lastDate: DateTime.now().add(const Duration(days: 365 * 10)));
     if (date != null) {
       setState(() {
         _selectedDate = date;
